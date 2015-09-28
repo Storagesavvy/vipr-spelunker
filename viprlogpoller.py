@@ -14,16 +14,14 @@ viprvip = "10.4.44.6"
 url = "https://"+viprvip+":4443/logs"
 logfile = "logs_response.txt"
 
-#print header
-#print url
 print "Requesting Logs from ViPR Controller"
 logs_response = requests.get(url+'?'+start+'&'+end, headers=header, verify=False, stream=True)
-#print url+'?'+start+'&'+end+', headers='+str(header)+', verify='+certverify+', stream=True'
 
-#print "Writing Logs to File"
+print "Writing Logs to File"
 print "Forwarding Logs via SysLog"
-lastlogrecord = 5
-#lastlogrecord = len(logs_response.json())-1
+
+#lastlogrecord = 1
+lastlogrecord = len(logs_response.json())-1
 #f = open(logfile, 'w')
 for line in range(0, lastlogrecord):
     badlog = (str(logs_response.json()[line]))
@@ -31,9 +29,9 @@ for line in range(0, lastlogrecord):
     badlog = badlog.replace("\': ", "=")
     badlog = badlog.replace(", u\'", " ")
     badlog = badlog.replace("\', u\'", "\' ")
-    badlog = badlog.replace("\'}", "\'}")
-    cleanlog = badlog.replace("{u\'node", "node")
-    logging.info(cleanlog)
-#    f.write(cleanlog+"\n")
+    badlog = badlog.replace("\'}", "\'")
+    badlog = badlog.replace("{u\'node", "node")
+    logging.warn(badlog)
+#    f.write(badlog+"\n")
 #f.close()
 

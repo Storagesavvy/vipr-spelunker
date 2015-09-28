@@ -5,7 +5,7 @@
 <b>ViPR-Spelunker</b> has been updated to handle reformatting of the JSON output to make parsing by Splunk and other tools easier. This code also now includes embedded syslog forwarding.  Log messages retreived from ViPR will be sent via Syslog to the destination specified in <b>viprlogpoller.py</b>.
 
 <h3>Plan:</h3>
-<p>This project will encompass the following functions:</p>
+<p>This project encompasses the following functions:</p>
 <p><b>1.)</b> Request a set of ViPR Controller (aka CoprHD) logs between two timestamp value with a RESTful GET request to the ViPR Controller API interface (<b>IMPLEMENTED</b> in viprlogpoller.py)</p>
 <p><b>2.)</b> Track the timestamp of the last polling cycle for use during the next polling cycle (<b>IMPLEMENTED</b> in timestamper.py)</p>
 <p><b>3.)</b> Receive the JSON log response from ViPR Controller following the request and store it in memory for parsing (<b>IMPLEMENTED</b> in viprlogpoller.py)</p>

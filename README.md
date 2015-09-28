@@ -27,3 +27,5 @@
 
 <p>More information on generating/retrieving your AUTH key can be found <a href="https://www.emc.com/techpubs/vipr/run_rest_api_script_proxy_user-1.htm"> at EMC.com</a></p>
 
+<h3>Reference Information</h3>
+<a href="https://www.emc.com/techpubs/api/vipr/v2-3-0-0/index.htm">CoprHD/ViPR 2.3 API Reference</a>

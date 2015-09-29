@@ -18,10 +18,12 @@ startstoptime = logstartstop()
 ##Set timestamps for Test Purposes - Comment out the following line during normal processing
 #startstoptime = "start=2015-09-24_17:28:23&end=2015-09-24_17:33:37"
 
-##Static Variables for processing - do not edit 
+##Static Variables for processing - do not edit
+statelog = "state_tracking.txt"
 logfile = "logs_response.txt"
 url = "https://"+viprvip+":4443/logs"
 header = {'accept': 'application/JSON','X-SDS-AUTH-TOKEN': authtoken}
+recovery = 0
 
 ##Set up Syslog targets
 logger = logging.getLogger()
@@ -31,14 +33,24 @@ logger.addHandler(SysLogHandler(address=(syslogtarget, syslogport)))
 ##Send REST-HTTP GET Request to VIPR to retrieve logs
 #print "Requesting Logs from ViPR Controller"
 #print startstoptime
-logs_response = requests.get(url+'?'+startstoptime, headers=header, verify=False, stream=True)
+if recovery = 0:
+    logs_response = requests.get(url+'?'+startstoptime, headers=header, verify=False, stream=True)
+#elif recovery = 1:
+#    f = open(statelog, 'r')
+#    logs_response = f.readline()???
+#    f.close()
 
 #print "Writing Logs to File"
 #print "Forwarding Logs via SysLog"
 
 ##Get total number of log entries in ViPR JSON response
 #lastlogrecord = 1 #Uncomment this line and comment out the next line for test purposes
-lastlogrecord = len(logs_response.json())-1 #comment out this line for test purposes
+if recovery = 0
+    lastlogrecord = len(logs_response.json())-1 #comment out this line for test purposes
+#elif recovery = 1:
+#    g = open(statelog, 'r')
+#    lastlogrecord = g.readline()???
+#    g.close()
 #print lastlogrecord
 
 ##Create variable for progress tracking
@@ -71,4 +83,3 @@ for line in range(0, lastlogrecord):
 ##Close log file at end of polling cycle if logging to file
 if writetofile = 1:
     f.close()
-

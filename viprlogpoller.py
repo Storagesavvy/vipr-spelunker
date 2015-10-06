@@ -1,6 +1,6 @@
 ##ViPR-Spelunker Syslog Forwarder for EMC ViPR/CoprHD Logs
 
-def forwardviprlogs(recovery,catchup):
+def forwardviprlogs( recovery, catchup ):
     import requests, json, logging
     from logging.handlers import SysLogHandler
     from timestamper import logstartstop
@@ -119,4 +119,15 @@ def forwardviprlogs(recovery,catchup):
     if writetofile == 1:
         f.close()
 
-forwardviprlogs(0,0)
+def main():
+    import time
+    recovery = 0
+    catchup = 0
+    interval = 300
+    while True:
+        print "Polling and Forwarding Logs"
+        forwardviprlogs( recovery, catchup )
+        print "Waiting "+str(interval)+" Seconds"
+        time.sleep(interval)
+
+main()

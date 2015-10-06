@@ -1,6 +1,7 @@
 ##Master wrapper script that starts, checks status, and executes the poller functions
 def main():
-    import time, viprlogpoller
+    import time
+    from viprlogpoller import forwardviprlogs
     recovery = 0
     catchup = 0
     interval = 300
@@ -15,7 +16,7 @@ def main():
 ##   execute viprlogpoller.py
     while True:
 	print "Polling and Forwarding Logs"
-        forwardviprlog(recovery,catchup)
+        forwardviprlogs( recovery, catchup )
 	print "Waiting "+str(interval)+" Seconds"
         time.sleep(interval)
 

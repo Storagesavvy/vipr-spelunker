@@ -1,25 +1,18 @@
+#import datetime module
 import datetime
+from datetime import timedelta
 
 """timestamp tracking function for splunk REST API ViPR Logging App"""
 
 def logstartstop():
-    #import datetime module
-    import datetime
-    from datetime import timedelta
-    
     #get current time for log request stop time
     stoptime = datetime.datetime.now()
     
     #increment 1 second for start time of polling cycle after this one to prevent duplicate log entries - OLD
-    #futurestarttime = stoptime+datetime.timedelta(0,1) # OLD
     futurestarttime = stoptime
     #decrement 1 minute for stop time of this polling cycle
     stoptime = stoptime-datetime.timedelta(0,60)
     
-    #reformat time for REST API use - OLD - will remove
-    #stoptime = stoptime.strftime('%Y-%m-%d_%H:%M:%S')
-    #futurestarttime = futurestarttime.strftime('%Y-%m-%d_%H:%M:%S')
-
     #reformat time for REST API use - NEW
     #set seconds to 0 to align timestamps between polling cycles
     stoptime = stoptime.strftime('%Y-%m-%d_%H:%M:00')

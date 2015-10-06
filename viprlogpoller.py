@@ -1,9 +1,10 @@
 ##ViPR-Spelunker Syslog Forwarder for EMC ViPR/CoprHD Logs
 
+import requests, json, logging, socket, time
+from logging.handlers import SysLogHandler
+from timestamper import logstartstop
+
 def forwardviprlogs( recovery, catchup ):
-    import requests, json, logging
-    from logging.handlers import SysLogHandler
-    from timestamper import logstartstop
 
 ##User variables - set appropriately for your environment
 ##See https://www.emc.com/techpubs/vipr/run_rest_api_script_proxy_user-1.htm for help generating the authtoken
@@ -28,16 +29,16 @@ def forwardviprlogs( recovery, catchup ):
     restqueue = "rest_response.txt"
     url = "https://"+viprvip+":4443/logs"
     header = {'accept': 'application/JSON','X-SDS-AUTH-TOKEN': authtoken}
-#    recovery = 0
 
 ##Set up Syslog targets
     logger = logging.getLogger()
     logger.addHandler(SysLogHandler(address=(syslogtarget, syslogport)))
-#logger.addHandler(logging.FileHandler("viprsyslog.log"))
+    #logger.addHandler(logging.FileHandler("viprsyslog.log"))
 
 ##Send REST-HTTP GET Request to VIPR to retrieve logs
     print "Requesting Logs from ViPR Controller"
     print "Startstoptime "+str(startstoptime)
+    requeuelinetemp = False
     if recovery == 0:
         r = open(restqueue, 'w')
         logs_response = requests.get(url+'?'+startstoptime, headers=header, verify=False, stream=True)
@@ -45,16 +46,12 @@ def forwardviprlogs( recovery, catchup ):
         for lineone in range(0, lastlogrecord):
             restqueuelinetemp = (str(logs_response.json()[lineone]))
             r.write(restqueuelinetemp+'\n')
-#            print str(lineone)
         r.close()
 
 #elif recovery = 1:
 #    f = open(statelog, 'r')
 #    logs_response = f.readline()???
 #    f.close()
-
-#print "Writing Logs to File"
-#print "Forwarding Logs via SysLog"
 
 ##Get total number of log entries in ViPR JSON response
     if testmode == 1:
@@ -73,44 +70,30 @@ def forwardviprlogs( recovery, catchup ):
 #print lastlogrecord
 
 ##Create variable for progress tracking
-#lastlogrecord = 5
     countdown = lastlogrecord
-#    print "countdown "+str(countdown)+" : lastlogrecord "+str(lastlogrecord)
 
 ##open file for saving logs to disk if enabled
     if writetofile == 1:
         f = open(logfile, 'w')
 
 ##Iterate through all log records received from ViPR and forward
-#r = open(restqueue, 'r+')
     print "Formatting and Forwarding Logs"
-#for linetwo in range(0, lastlogrecord):
     with open(restqueue, "r") as file:
         for line in file:
             line = line.rstrip("\n")
-        #print "line \n"+line
-    #Reformat JSON for easier parsing by syslog host
-    #badlog = (str(logs_response.json()[line]))
-    #badlog = str(r.readline(linetwo))
-        #print "readline \n"+line
             line = line.replace("\': u", "=", 9)
-        #print line
             line = line.replace(", u\'", ", ", 8)
-        #print line
             line = line.replace("\': ", "=", 2)
-        #print line
             line = line.replace("{u\'", "{", 1)
-        #print line
             countdown = countdown - 1
-    ##Save current progress for this polling cycle in case of failure restart
+            ##Save current progress for this polling cycle in case of failure restart
             g = open(statelog, 'w')
-#            print "countdown "+str(countdown)
             g.write(str(countdown))
             g.close()
-    ##Send log entry to syslog destination
+            ##Send log entry to syslog destination
             if sendtosyslog == 1:
                 logging.warn(line)
-    ##Write log entry to local file
+            ##Write log entry to local file
             if writetofile == 1:
                 f.write(line+"\n")
 
@@ -120,7 +103,6 @@ def forwardviprlogs( recovery, catchup ):
         f.close()
 
 def main():
-    import time
     recovery = 0
     catchup = 0
     interval = 300
